@@ -36,20 +36,24 @@ def menu(balance):
     number = input("\t\t\t➡  ")
     return number
 
+
+
+
 def scratch(balance):
     while True:
         title()
         print(f"""
-                
+                    Please choose one of the following modes:
+              
                         Current balance: ${balance} 💰
 
                     * * * * * * * * * * * * * * *  
                     *                           *
-                    *   1. 📥 Scratch           *
+                    *   1. 🍀 Classic           *
                     *                           *
-                    *   2. 📤 Bomb          *
+                    *   2. 💣 Bomb              *
                     *                           *
-                    *   3. ↩️  Tower            *
+                    *   3. ↩️  Return            *
                     *                           *
                     * * * * * * * * * * * * * * * 
         """)
@@ -58,9 +62,9 @@ def scratch(balance):
         
         match number:
             case "1":
-                balance = deposit(balance)
+                classic(balance)
             case "2":
-                balance = withdraw(balance)
+                ...
             case "3":
                 break
             case _:
@@ -71,6 +75,46 @@ def scratch(balance):
     return balance
 
 
+def classic(balance):
+    
+    symbols = ["🍋", "🍉", "🍒", "⭐", "🔥", "💎", "🍀"]
+
+    lemon_value = 2
+    watermelon_value = 3
+    cherry_value = 4
+    star_value = 5
+    fire_value = 6
+    diamond_value = 7
+    lucky_value = 10 
+    
+    while True:
+        try:
+            title()
+            print(f"""      
+                         Current balance: ${balance} 💰
+                  
+                        To return press Ctrl + C 
+                  """)
+            amount = int(input("\t\t\tPlace your bet amount: "))
+            if amount <= 0:
+                raise ValueError
+            elif amount > balance:
+                title()
+                print("\n\t\t Your bet exceeds your available balance.")
+                time.sleep(1)
+            elif amount <= 0:
+                raise ValueError
+            break
+        except ValueError:
+            title()
+            print("\n\t\t    Please enter a valid amount.")
+            time.sleep(1)
+        except KeyboardInterrupt:
+            return balance
+
+    balance -= amount
+
+    
 
 
 def manage(balance):
@@ -108,6 +152,9 @@ def manage(balance):
     
     return balance
             
+
+
+
 def deposit(balance):
     while True:
         try:
@@ -147,10 +194,12 @@ def withdraw(balance):
             amount = int(input("\t\t   Enter the amount to be withdrawn: "))
             if amount <= 0:
                 raise ValueError
+            elif amount > balance:
+                raise ValueError
             break
         except ValueError:
             title()
-            print("\nPlease enter a valid amount.")
+            print("\n\t\t    Please enter a valid amount.")
             time.sleep(1)
         except KeyboardInterrupt:
             return balance 
