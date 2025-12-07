@@ -36,8 +36,39 @@ def menu(balance):
     number = input("\t\t\t➡  ")
     return number
 
-def scratch():
-    ...
+def scratch(balance):
+    while True:
+        title()
+        print(f"""
+                
+                        Current balance: ${balance} 💰
+
+                    * * * * * * * * * * * * * * *  
+                    *                           *
+                    *   1. 📥 Scratch           *
+                    *                           *
+                    *   2. 📤 Bomb          *
+                    *                           *
+                    *   3. ↩️  Tower            *
+                    *                           *
+                    * * * * * * * * * * * * * * * 
+        """)
+
+        number = input("\t\t\t➡  ")
+        
+        match number:
+            case "1":
+                balance = deposit(balance)
+            case "2":
+                balance = withdraw(balance)
+            case "3":
+                break
+            case _:
+                title()
+                print("\n\t\t    Please choose a valid option!")
+                time.sleep(1)
+    
+    return balance
 
 
 
@@ -148,7 +179,7 @@ def main():
         option = menu(balance)
         match option:
             case "1":
-                scratch()      
+                scratch(balance)      
             case "2":    
                 balance = manage(balance)
             case "3":
