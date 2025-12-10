@@ -62,7 +62,7 @@ def scratch(balance):
         
         match number:
             case "1":
-                classic(balance)
+                classic_menu(balance)
             case "2":
                 ...
             case "3":
@@ -75,17 +75,7 @@ def scratch(balance):
     return balance
 
 
-def classic(balance):
-    
-    symbols = ["🍋", "🍉", "🍒", "⭐", "🔥", "💎", "🍀"]
-
-    lemon_value = 2
-    watermelon_value = 3
-    cherry_value = 4
-    star_value = 5
-    fire_value = 6
-    diamond_value = 7
-    lucky_value = 10 
+def classic_menu(balance):
     
     while True:
         try:
@@ -93,7 +83,7 @@ def classic(balance):
             print(f"""      
                          Current balance: ${balance} 💰
                   
-                        To return press Ctrl + C 
+                         To return press Ctrl + C 
                   """)
             amount = int(input("\t\t\tPlace your bet amount: "))
             if amount <= 0:
@@ -114,6 +104,33 @@ def classic(balance):
 
     balance -= amount
 
+    classic(balance)
+
+
+def classic(balance):
+    symbols = ["🍋", "🍉", "🍒", "⭐", "🔥", "💎", "🍀"]
+
+    lemon_value = 2
+    watermelon_value = 3
+    cherry_value = 4
+    star_value = 5
+    fire_value = 6
+    diamond_value = 7
+    lucky_value = 10 
+
+    results = []
+
+    scratching = scratch_symbols()
+    
+    print(scratching)
+
+    time.sleep(1)
+
+
+def scratch_symbols():
+    symbols = ["🍋", "🍉", "🍒", "⭐", "🔥", "💎", "🍀"]
+
+    return [random.choice(symbols) for _ in range(6)]
     
 
 
