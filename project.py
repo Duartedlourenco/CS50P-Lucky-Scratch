@@ -245,7 +245,7 @@ def main():
         option = menu(balance)
         match option:
             case "1":
-                scratch(balance)      
+                balance = scratch(balance)      
             case "2":    
                 balance = manage(balance)
             case "3":
