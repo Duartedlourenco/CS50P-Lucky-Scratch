@@ -86,8 +86,7 @@ def classic_game(balance):
     while True:
         try:
             title()
-            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: ")
-            bet = int(input("\n\t\t\t➡  "))
+            bet = int(input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: "))
             if bet > balance:
                 title()
                 print("\n\t\t\tInsufficient balance!")
@@ -109,15 +108,10 @@ def classic_game(balance):
     
     result = [random.choice(symbols) for _ in range(5)]
     title()
-    print("\n\t\t\t   Scratching.")
-    time.sleep(0.5)
-    title()
-    print("\n\t\t\t   Scratching..")
-    time.sleep(0.5)
-    title()
-    print("\n\t\t\t   Scratching...")
-    time.sleep(0.5)
-    title()
+    for dots in [".", "..", "..."]:
+        print(f"\n\t\t\t   Scratching{dots}")
+        time.sleep(0.5)
+        title()
     print(f"\n\t\t\t[ {' |'.join(result)} ]")
     
     win = 0
@@ -127,12 +121,12 @@ def classic_game(balance):
             break
             
     if win > 0:
-        print(f"\n\t\t\t🎉 YOU WON ${win}!")
         balance += win
+        input(f"\n\t\t\t🎉 YOU WON ${win}!\n\n\t\t\tPress Enter to return...")
     else:
-        print("\n\t\t\tNo luck this time.")
+        input("\n\t\t\tNo luck this time.\n\n\t\t\tPress Enter to return...")
+
     
-    time.sleep(4)
     return balance
 
 
@@ -141,15 +135,20 @@ def bomb_game(balance):
     while True:
         try:
             title()
-            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: ")
-            bet = int(input("\n\t\t\t➡  "))
-            if bet <= 0 or bet > balance:
+            bet = int(input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: "))
+            if bet > balance:
+                title()
+                print("\n\t\t\tInsufficient balance!")
+                time.sleep(1)
+                continue
+            if bet <= 0: 
                 raise ValueError
             break
-        except ValueError:
-            print("\n\t\t\tInvalid bet!")
+        except ValueError: 
+            title()
+            print("\n\t\t\t Invalid amount!")
             time.sleep(1)
-        except KeyboardInterrupt:
+        except KeyboardInterrupt: 
             return balance
 
     balance -= bet
@@ -166,7 +165,9 @@ def bomb_game(balance):
 
     while True:
         title()
-        
+        game_pot = multipliers[current_move]
+        pot = round(bet * game_pot, 3)
+
         if len(revealed) == 24:  
             title()       
             print(f"\n\t\t🎉 CONGRATULATIONS! You revealed all safe tiles!!\n\n\t\t💰 Cashing out with ${pot}")
@@ -175,9 +176,6 @@ def bomb_game(balance):
             break
 
         else:
-            game_pot = multipliers[current_move]
-            pot = round(bet * game_pot, 3)
-
             print(bomb_pos)
             print(f"\n\t\t\tPOT: ${pot}")
             print(f"\t\t\tNext Multiplier: {multipliers[current_move + 1]}x")
@@ -214,7 +212,7 @@ def bomb_game(balance):
                 revealed.append((r, c))
                 current_move += 1
 
-            except:
+            except ValueError:
                 continue
 
 
@@ -268,7 +266,6 @@ def deposit(balance):
     while True:
         try:
             title()
-            title()
             print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tEnter the amount to be deposited: ")
             amount = int(input("\n\t\t\t➡  "))
             if amount <= 0:
@@ -294,7 +291,6 @@ def withdraw(balance):
     while True:
         try:
             title()
-            title()
             print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tEnter the amount to be withdrawn: ")
             amount = int(input("\n\t\t\t➡  "))
             if amount <= 0:
@@ -315,7 +311,6 @@ def withdraw(balance):
     print(f"\n\t\t     Successfully withdrawn ${amount}!")
     time.sleep(1)
     return balance
-
 
 
 #************************************************************************************************************#
@@ -390,8 +385,6 @@ and reward concepts in programming.
 
 #************************************************************************************************************#
     
-
-
 # MAIN MENU OPTIONS
 
 def main():
