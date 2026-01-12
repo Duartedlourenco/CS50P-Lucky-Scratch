@@ -68,9 +68,9 @@ def scratch(balance):
         option = scratch_menu(balance)
         match option:
             case "1":
-                classic_game(balance)
+                balance = classic_game(balance)
             case "2":
-                bomb_game(balance)
+                balance = bomb_game(balance)
             case "3":
                 break
             case _:
@@ -86,8 +86,8 @@ def classic_game(balance):
     while True:
         try:
             title()
-            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return")
-            bet = int(input("\n\t\t\tBet amount: "))
+            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: ")
+            bet = int(input("\n\t\t\t➡  "))
             if bet > balance:
                 title()
                 print("\n\t\t\tInsufficient balance!")
@@ -107,13 +107,19 @@ def classic_game(balance):
     symbols = ["🍋", "🍉", "🍒", "⭐", "🔥", "💎", "🍀"]
     values = {"🍋": 2, "🍉": 3, "🍒": 4, "⭐": 6, "🔥": 10, "💎": 20, "🍀": 50}
     
-    result = [random.choice(symbols) for _ in range(6)]
+    result = [random.choice(symbols) for _ in range(5)]
     title()
-    print("\n\t\tScratching...")
-    time.sleep(1)
-    print(f"\n\t\t[ {' '.join(result)} ]")
+    print("\n\t\t\t   Scratching.")
+    time.sleep(0.5)
+    title()
+    print("\n\t\t\t   Scratching..")
+    time.sleep(0.5)
+    title()
+    print("\n\t\t\t   Scratching...")
+    time.sleep(0.5)
+    title()
+    print(f"\n\t\t\t[ {' |'.join(result)} ]")
     
-    # Verifica se há 3 iguais
     win = 0
     for s in set(result):
         if result.count(s) >= 3:
@@ -121,11 +127,12 @@ def classic_game(balance):
             break
             
     if win > 0:
-        print(f"\n\t\t🎉 YOU WON ${win}!"); balance += win
+        print(f"\n\t\t\t🎉 YOU WON ${win}!")
+        balance += win
     else:
-        print("\n\t\tNo luck this time.")
+        print("\n\t\t\tNo luck this time.")
     
-    time.sleep(2)
+    time.sleep(4)
     return balance
 
 
@@ -134,49 +141,82 @@ def bomb_game(balance):
     while True:
         try:
             title()
-            print(f"\t\tBalance: ${balance} 💰")
-            bet = int(input("\t\tEnter bet for Bomb field: "))
-            if bet > balance: print("\t\tInsufficient!"); time.sleep(1); continue
-            balance -= bet
+            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: ")
+            bet = int(input("\n\t\t\t➡  "))
+            if bet <= 0 or bet > balance:
+                raise ValueError
             break
-        except: return balance
+        except ValueError:
+            print("\n\t\t\tInvalid bet!")
+            time.sleep(1)
+        except KeyboardInterrupt:
+            return balance
 
-    grid_size = 6
-    bomb_pos = (random.randint(1, 6), random.randint(1, 6))
+    balance -= bet
+
+    bomb_pos = (random.randint(1, 5), random.randint(1, 5))
     revealed = []
-    multiplier = 1.0
+    
+    current_move = 0
+    multipliers = [
+    0, 1.01, 1.05, 1.10, 1.15, 1.21, 1.27, 1.34, 1.42, 1.51, 1.61,
+    1.73, 1.86, 2.02, 2.20, 2.42, 2.69, 3.03, 3.46, 4.04, 4.85,
+    6.06, 8.08, 12.12, 24.24
+    ]
 
     while True:
         title()
-        current_pot = round(bet * multiplier, 2)
-        print(f"\t\tPOT: ${current_pot}  |  Next Multiplier: {round(multiplier + 0.4, 1)}x")
         
-        # Desenha o Tabuleiro
-        print("\n\t\t    1  2  3  4  5  6")
-        for r in range(1, 7):
-            print(f"\t\t{r} ", end="")
-            for c in range(1, 7):
-                if (r, c) in revealed: print(" ✅", end="")
-                else: print(" ⬛", end="")
-            print()
-            
-        move = input("\n\t\tEnter (row col) or 'S' to Cash Out: ").upper()
-        if move == 'S':
-            balance += current_pot
-            print(f"\t\tWise choice! You cashed out ${current_pot}"); time.sleep(2)
+        if len(revealed) == 24:  
+            title()       
+            print(f"\n\t\t🎉 CONGRATULATIONS! You revealed all safe tiles!!\n\n\t\t💰 Cashing out with ${pot}")
+            balance += pot
+            time.sleep(2)
             break
-        
-        try:
-            r, c = map(int, move.split())
-            if (r, c) == bomb_pos:
-                title(); print("\n\t\t💥 BOOM! You lost everything."); time.sleep(2); break
-            elif (r, c) in revealed or not (1 <= r <= 6 and 1 <= c <= 6):
-                continue
-            else:
+
+        else:
+            game_pot = multipliers[current_move]
+            pot = round(bet * game_pot, 3)
+
+            print(bomb_pos)
+            print(f"\n\t\t\tPOT: ${pot}")
+            print(f"\t\t\tNext Multiplier: {multipliers[current_move + 1]}x")
+
+            print("\n\t\t\t    1  2  3  4  5")
+            for r in range(1, 6):
+                print(f"\t\t\t{r} ", end="")
+                for c in range(1, 6):
+                    print(" ✅" if (r, c) in revealed else " ⬛", end="")
+                print()
+
+            move = input("\n\t\t\t(Row Col) or 'C' to Cash Out: ").upper()
+
+            if move == 'C':
+                balance += pot
+                print(f"\n\t\t💰 You cashed out ${pot}!")
+                time.sleep(2)
+                return balance
+
+            try:
+                r, c = map(int, move.split())
+                if not (1 <= r <= 5 and 1 <= c <= 5):
+                    continue
+
+                if (r, c) in revealed:
+                    continue
+
+                if (r, c) == bomb_pos:
+                    title()
+                    print("\n\t\t💥 BOOM! You lost everthing!")
+                    time.sleep(2)
+                    return balance
+
                 revealed.append((r, c))
-                multiplier += 0.4
-        except: continue
-    return balance
+                current_move += 1
+
+            except:
+                continue
+
 
 #************************************************************************************************************#
 
@@ -255,8 +295,8 @@ def withdraw(balance):
         try:
             title()
             title()
-            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return")
-            amount = int(input("\n\t\t\tEnter the amount to be withdrawn: "))
+            print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tEnter the amount to be withdrawn: ")
+            amount = int(input("\n\t\t\t➡  "))
             if amount <= 0:
                 raise ValueError
             elif amount > balance:
@@ -285,18 +325,68 @@ def withdraw(balance):
 def information():
     title()
     print("""
-    HOW TO PLAY:
-    
-    🎰 SCRATCH (Classic):
-    Match 3 symbols to win. Each symbol has a different 
-    multiplier. The Lucky Clover (🍀) pays 50x!
-    
-    💣 BOMB:
-    A 6x6 grid with 1 hidden bomb. Each safe square 
-    increases your multiplier. Cash out (S) any time 
-    or lose it all if you hit the bomb!
+────────────────────────────────────────────────────────────
+📚 PROJECT INFORMATION - CS50P
+────────────────────────────────────────────────────────────
+
+Lucky Scratch is a terminal-based game developed as a final
+project for the CS50P - Introduction to Programming with Python
+course offered by Harvard University.
+
+The main goal of this project is to apply core programming
+concepts such as:
+
+- Control flow
+- Functions
+- Dictionaries and lists
+- Randomness
+- Error handling
+- User interaction in terminal environments
+
+────────────────────────────────────────────────────────────
+🎮 GAME MODES
+────────────────────────────────────────────────────────────
+
+🍀 CLASSIC MODE (Scratch Game)
+
+In Classic mode, you place a bet and scratch 5 symbols.
+To win, you must match AT LEAST 3 identical symbols.
+
+SYMBOL VALUES:
+────────────────
+🍋 Lemon      →  2x Bet
+🍉 Watermelon →  3x Bet
+🍒 Cherry     →  4x Bet
+⭐ Star       →  6x Bet
+🔥 Fire       →  10x Bet
+💎 Diamond    →  20x Bet
+🍀 Clover     →  50x Bet 
+
+────────────────────────────────────────────────────────────
+💣 BOMB MODE (Risk Strategy Game)
+────────────────────────────────────────────────────────────
+
+In Bomb mode, you place a bet and face a 5x5 grid.
+One of the tiles hides a 💥 bomb.
+
+✔ Each safe tile you reveal increases your multiplier  
+✔ You can CASH OUT at any time  
+✖ Hitting the bomb means losing the entire bet
+
+The game automatically ends when ALL safe tiles
+are revealed successfully. 
+
+────────────────────────────────────────────────────────────
+⚠️  IMPORTANT NOTE
+────────────────────────────────────────────────────────────
+This game is for educational purposes only and simulates
+casino-style mechanics to demonstrate probability, risk,
+and reward concepts in programming.
+
+────────────────────────────────────────────────────────────
     """)
     input("\n\t\tPress Enter to return...")
+
 
 #************************************************************************************************************#
     
@@ -319,10 +409,9 @@ def main():
             case "4":
                 sys.exit("Come back soon!")
             case _:
+                title()
                 print("\n\t\t    Please choose a valid option!")
                 time.sleep(1)
-
-
 
 
 if __name__ == "__main__":
