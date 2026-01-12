@@ -173,7 +173,7 @@ def bomb_game(balance):
             print(f"\n\t\t🎉 CONGRATULATIONS! You revealed all safe tiles!!\n\n\t\t💰 Cashing out with ${pot}")
             balance += pot
             time.sleep(2)
-            break
+            return balance
 
         else:
             print(bomb_pos)

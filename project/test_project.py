@@ -2,8 +2,7 @@ import pytest
 from project import scratch, classic_game, bomb_game, manage, deposit, withdraw
 
 def test_scratch():
-    option = 1
-    
+    ...
 
 def test_classic_game():
     ...
