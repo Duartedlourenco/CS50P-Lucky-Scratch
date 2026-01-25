@@ -87,17 +87,12 @@ def classic_game(balance):
         try:
             title()
             bet = int(input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: "))
-            if bet > balance:
-                title()
-                print("\n\t\t\tInsufficient balance!")
-                time.sleep(1)
-                continue
-            if bet <= 0: 
-                raise ValueError
+            validate_bet(bet, balance)
             break
-        except ValueError: 
+
+        except ValueError as e:
             title()
-            print("\n\t\t\t Invalid amount!")
+            print(f"\n\t\t\t {e}")
             time.sleep(1)
         except KeyboardInterrupt: 
             return balance
@@ -114,12 +109,8 @@ def classic_game(balance):
         title()
     print(f"\n\t\t\t[ {' |'.join(result)} ]")
     
-    win = 0
-    for s in set(result):
-        if result.count(s) >= 3:
-            win = bet * values[s]
-            break
-            
+    win = calculate_classic_win(result, bet, values)
+
     if win > 0:
         balance += win
         input(f"\n\t\t\t🎉 YOU WON ${win}!\n\n\t\t\tPress Enter to return...")
@@ -129,6 +120,18 @@ def classic_game(balance):
     
     return balance
 
+def calculate_classic_win(symbols, bet, values):
+    for s in set(symbols):
+        if symbols.count(s) >= 3:
+            return bet * values[s]
+    return 0
+
+def validate_bet(bet, balance):
+    if bet <= 0:
+        raise ValueError("Invalid bet amount")
+    if bet > balance:
+        raise ValueError("Insufficient balance")
+    return True
 
 
 def bomb_game(balance):
@@ -136,17 +139,12 @@ def bomb_game(balance):
         try:
             title()
             bet = int(input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: "))
-            if bet > balance:
-                title()
-                print("\n\t\t\tInsufficient balance!")
-                time.sleep(1)
-                continue
-            if bet <= 0: 
-                raise ValueError
+            validate_bet(bet, balance)
             break
-        except ValueError: 
+
+        except ValueError as e:
             title()
-            print("\n\t\t\t Invalid amount!")
+            print(f"\n\t\t\t {e}")
             time.sleep(1)
         except KeyboardInterrupt: 
             return balance
@@ -176,7 +174,6 @@ def bomb_game(balance):
             return balance
 
         else:
-            print(bomb_pos)
             print(f"\n\t\t\tPOT: ${pot}")
             print(f"\t\t\tNext Multiplier: {multipliers[current_move + 1]}x")
 
