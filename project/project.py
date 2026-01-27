@@ -153,18 +153,14 @@ def bomb_game(balance):
 
     bomb_pos = (random.randint(1, 5), random.randint(1, 5))
     revealed = []
-    
     current_move = 0
-    multipliers = [
-    0, 1.01, 1.05, 1.10, 1.15, 1.21, 1.27, 1.34, 1.42, 1.51, 1.61,
-    1.73, 1.86, 2.02, 2.20, 2.42, 2.69, 3.03, 3.46, 4.04, 4.85,
-    6.06, 8.08, 12.12, 24.24
-    ]
+    multipliers = [0, 1.01, 1.05, 1.10, 1.15, 1.21, 1.27, 1.34, 1.42, 1.51, 1.61,
+                  1.73, 1.86, 2.02, 2.20, 2.42, 2.69, 3.03, 3.46, 4.04, 4.85,
+                  6.06, 8.08, 12.12, 24.24]
 
     while True:
         title()
-        game_pot = multipliers[current_move]
-        pot = round(bet * game_pot, 3)
+        pot = calculate_bomb_pot(bet, current_move, multipliers)
 
         if len(revealed) == 24:  
             title()       
@@ -188,7 +184,7 @@ def bomb_game(balance):
 
             if move == 'C':
                 balance += pot
-                print(f"\n\t\t💰 You cashed out ${pot}!")
+                print(f"\n\t\t\t💰 You cashed out ${pot}!")
                 time.sleep(2)
                 return balance
 
@@ -200,9 +196,9 @@ def bomb_game(balance):
                 if (r, c) in revealed:
                     continue
 
-                if (r, c) == bomb_pos:
+                if is_bomb_hit((r, c), bomb_pos):
                     title()
-                    print("\n\t\t💥 BOOM! You lost everthing!")
+                    print("\n\t\t💥 BOOM! You lost everything!")
                     time.sleep(2)
                     return balance
 
@@ -212,6 +208,13 @@ def bomb_game(balance):
             except ValueError:
                 continue
 
+def calculate_bomb_pot(bet, moves, multipliers):
+    if moves < 0 or moves >= len(multipliers):
+        raise ValueError("Invalid move number!")
+    return int(round(bet * multipliers[moves], 3))
+
+def is_bomb_hit(position, bomb_position):
+    return position == bomb_position
 
 #************************************************************************************************************#
 
@@ -264,23 +267,31 @@ def deposit(balance):
         try:
             title()
             print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tEnter the amount to be deposited: ")
-            amount = int(input("\n\t\t\t➡  "))
-            if amount <= 0:
-                raise ValueError
-            break
-        except ValueError:
+            amount = input("\n\t\t\t➡  ")
+
+            if not amount.isdigit():
+                raise TypeError("Please enter digits only!")
+            
+            amount = int(amount)
+            balance = deposit_balance(balance, amount)
+
             title()
-            print("\nPlease enter a valid amount.")
+            print(f"\n\t\t Successfully added ${amount} to balance!")
             time.sleep(1)
-        except KeyboardInterrupt:
             return balance
         
-    balance += amount
+        except (TypeError, ValueError) as e:
+            title()
+            print(f"\n\t\t\t{e}")
+            time.sleep(1)
 
-    title()
-    print(f"\n\t\t Successfully added ${amount} to balance!")
-    time.sleep(1)
-    return balance
+        except KeyboardInterrupt:
+            return balance
+
+def deposit_balance(balance, amount):
+    if amount <= 0:
+        raise ValueError("Invalid deposit amount!")
+    return balance + amount
 
 
 
@@ -289,26 +300,33 @@ def withdraw(balance):
         try:
             title()
             print(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tEnter the amount to be withdrawn: ")
-            amount = int(input("\n\t\t\t➡  "))
-            if amount <= 0:
-                raise ValueError
-            elif amount > balance:
-                raise ValueError
-            break
-        except ValueError:
+            amount = input("\n\t\t\t➡  ")
+
+            if not amount.isdigit():
+                raise TypeError("Please enter digits only!")
+            
+            amount = int(amount)
+            balance = withdraw_balance(balance, amount)
+
             title()
-            print("\n\t\t    Please enter a valid amount.")
+            print(f"\n\t\t     Successfully withdrawn ${amount}!")
             time.sleep(1)
+            return balance
+
+        except (TypeError, ValueError) as e:
+            title()
+            print(f"\n\t\t\t{e}")
+            time.sleep(1)
+
         except KeyboardInterrupt:
-            return balance 
+            return balance
 
-    balance -= amount
-
-    title()
-    print(f"\n\t\t     Successfully withdrawn ${amount}!")
-    time.sleep(1)
-    return balance
-
+def withdraw_balance(balance, amount):
+    if amount <= 0:
+        raise ValueError("Invalid withdraw amount")
+    if amount > balance:
+        raise ValueError("Insufficient balance")
+    return balance - amount
 
 #************************************************************************************************************#
 
@@ -359,7 +377,7 @@ SYMBOL VALUES:
 ────────────────────────────────────────────────────────────
 
 In Bomb mode, you place a bet and face a 5x5 grid.
-One of the tiles hides a 💥 bomb.
+One of the tiles hides a bomb.
 
 ✔ Each safe tile you reveal increases your multiplier  
 ✔ You can CASH OUT at any time  
