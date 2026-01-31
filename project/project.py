@@ -77,7 +77,6 @@ def scratch(balance):
                 title()
                 print("\n\t\t    Please choose a valid option!")
                 time.sleep(1)
-    
     return balance
 
 
@@ -86,13 +85,18 @@ def classic_game(balance):
     while True:
         try:
             title()
-            bet = int(input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: "))
+            bet = input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: ")
+            
+            if not bet.isdigit():
+                raise TypeError("Please enter digits only!")
+            
+            bet = int(bet)
             validate_bet(bet, balance)
             break
 
-        except ValueError as e:
+        except (TypeError, ValueError) as e:
             title()
-            print(f"\n\t\t\t {e}")
+            print(f"\n\t\t\t{e}")
             time.sleep(1)
         except KeyboardInterrupt: 
             return balance
@@ -128,9 +132,9 @@ def calculate_classic_win(symbols, bet, values):
 
 def validate_bet(bet, balance):
     if bet <= 0:
-        raise ValueError("Invalid bet amount")
+        raise ValueError("Invalid bet amount!")
     if bet > balance:
-        raise ValueError("Insufficient balance")
+        raise ValueError("Insufficient balance!")
     return True
 
 
@@ -138,14 +142,20 @@ def bomb_game(balance):
     while True:
         try:
             title()
-            bet = int(input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: "))
+            bet = input(f"\n\t\t\tCurrent Balance: ${balance} 💰\n\n\t\t\tPress Ctrl + C to return\n\n\t\t\tBet amount: ")
+            
+            if not bet.isdigit():
+                raise TypeError("Please enter digits only!")
+            
+            bet = int(bet)
             validate_bet(bet, balance)
             break
 
-        except ValueError as e:
+        except (TypeError, ValueError) as e:
             title()
-            print(f"\n\t\t\t {e}")
+            print(f"\n\t\t\t{e}")
             time.sleep(1)
+
         except KeyboardInterrupt: 
             return balance
 
@@ -323,9 +333,9 @@ def withdraw(balance):
 
 def withdraw_balance(balance, amount):
     if amount <= 0:
-        raise ValueError("Invalid withdraw amount")
+        raise ValueError("Invalid withdraw amount!")
     if amount > balance:
-        raise ValueError("Insufficient balance")
+        raise ValueError("Insufficient balance!")
     return balance - amount
 
 #************************************************************************************************************#
@@ -415,7 +425,8 @@ def main():
             case "3":
                 information()
             case "4":
-                sys.exit("Come back soon!")
+                title()
+                sys.exit("\n\t\t\tCome back soon!\n")
             case _:
                 title()
                 print("\n\t\t    Please choose a valid option!")
