@@ -1,6 +1,6 @@
 # **Lucky Scratch** 
 
-### Video Demo: <URL HERE>
+### Video Demo: [CS50P Lucky Scratch](https://youtu.be/Agf83Jbu__I)
 
 ## Description
 
